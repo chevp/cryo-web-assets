@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryo Logo Shader Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            min-width: 250px;
+        }
+
+        .controls h3 {
+            margin: 0 0 15px 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .control-group input[type="range"] {
+            width: 100%;
+        }
+
+        .control-group input[type="color"] {
+            width: 100%;
+            height: 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .shader-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .shader-toggle button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .shader-toggle button.active {
+            background: rgba(0, 150, 255, 0.6);
+        }
+
+        .shader-toggle button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .info {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            border-radius: 12px;
+            color: white;
+            font-size: 12px;
+        }
+
+        .info a {
+            color: #4fc3f7;
+            text-decoration: none;
+        }
+
+        .info a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="glCanvas"></canvas>
+
+    <div class="controls">
+        <h3>Cryo Logo Shader</h3>
+
+        <div class="shader-toggle">
+            <button id="simpleBtn" class="active">Simple</button>
+            <button id="iceBtn">Ice Effects</button>
+        </div>
+
+        <div id="iceControls" style="display: none;">
+            <div class="control-group">
+                <label for="glowIntensity">Glow Intensity: <span id="glowValue">0.3</span></label>
+                <input type="range" id="glowIntensity" min="0" max="1" step="0.1" value="0.3">
+            </div>
+
+            <div class="control-group">
+                <label for="shimmerSpeed">Shimmer Speed: <span id="shimmerValue">2.0</span></label>
+                <input type="range" id="shimmerSpeed" min="0" max="5" step="0.5" value="2.0">
+            </div>
+
+            <div class="control-group">
+                <label for="glowColor">Glow Color:</label>
+                <input type="color" id="glowColor" value="#66ccff">
+            </div>
+
+            <div class="control-group">
+                <label for="opacity">Opacity: <span id="opacityValue">1.0</span></label>
+                <input type="range" id="opacity" min="0" max="1" step="0.1" value="1.0">
+            </div>
+        </div>
+    </div>
+
+    <div class="info">
+        <strong>Cryo Web Assets Demo</strong><br>
+        Part of <a href="https://github.com/chevp/arctic-engine" target="_blank">Arctic Engine</a><br>
+        Repository: <a href="https://github.com/chevp/cryo-web-assets" target="_blank">cryo-web-assets</a>
+    </div>
+
+    <script type="module">
+        // This is a demo HTML file showing how to use the Cryo logo shaders
+        // For production, use the TypeScript examples in cryo-logo-shader.ts
+
+        console.log('Cryo Logo Shader Demo');
+        console.log('Load shader sources from:');
+        console.log('- Vertex: ../shaders/cryo-logo/cryo-logo.vert');
+        console.log('- Fragment (simple): ../shaders/cryo-logo/cryo-logo-simple.frag');
+        console.log('- Fragment (ice): ../shaders/cryo-logo/cryo-logo-ice.frag');
+        console.log('- Texture: ../textures/cryo.png');
+        console.log('');
+        console.log('For CDN usage:');
+        console.log('https://cdn.jsdelivr.net/gh/chevp/cryo-web-assets@main/');
+
+        // UI controls
+        const simpleBtn = document.getElementById('simpleBtn');
+        const iceBtn = document.getElementById('iceBtn');
+        const iceControls = document.getElementById('iceControls');
+
+        simpleBtn.addEventListener('click', () => {
+            simpleBtn.classList.add('active');
+            iceBtn.classList.remove('active');
+            iceControls.style.display = 'none';
+            console.log('Switched to simple shader');
+        });
+
+        iceBtn.addEventListener('click', () => {
+            iceBtn.classList.add('active');
+            simpleBtn.classList.remove('active');
+            iceControls.style.display = 'block';
+            console.log('Switched to ice effects shader');
+        });
+
+        // Parameter controls
+        document.getElementById('glowIntensity').addEventListener('input', (e) => {
+            document.getElementById('glowValue').textContent = e.target.value;
+            console.log('Glow intensity:', e.target.value);
+        });
+
+        document.getElementById('shimmerSpeed').addEventListener('input', (e) => {
+            document.getElementById('shimmerValue').textContent = e.target.value;
+            console.log('Shimmer speed:', e.target.value);
+        });
+
+        document.getElementById('opacity').addEventListener('input', (e) => {
+            document.getElementById('opacityValue').textContent = e.target.value;
+            console.log('Opacity:', e.target.value);
+        });
+
+        document.getElementById('glowColor').addEventListener('input', (e) => {
+            console.log('Glow color:', e.target.value);
+        });
+
+        // Note: Full WebGL implementation would go here
+        // See ../README.md for complete integration examples
+    </script>
+</body>
+</html>
