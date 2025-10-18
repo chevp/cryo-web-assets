@@ -1,0 +1,245 @@
+# Cryo-Protocol Scene: Suzanne in Box
+# Package: chevp.cryo.authoring.AuthoredScene
+# Description: Suzanne monkey head inside a textured box (GLTF scene with 2 entities)
+
+scene_id: "suzanne-in-box"
+name: "Suzanne in Box"
+
+# ============================================================================
+# ENTITIES (2 entities from GLTF: Cube and Suzanne)
+# ============================================================================
+
+entities {
+  entity_id: "cube"
+  name: "Cube"
+
+  # Transform (identity - uses GLTF transform)
+  transform {
+    position { x: 0.0 y: 0.0 z: 0.0 }
+    rotation { x: 0.0 y: 0.0 z: 0.0 w: 1.0 }
+    scale { x: 1.0 y: 1.0 z: 1.0 }
+  }
+
+  # Material reference
+  material_id: "mat_grid"
+
+  # Mesh from GLTF
+  mesh_asset {
+    uri: "asset://suzanne-in-box/models/SuzanneInBox.gltf#meshes/0"
+    asset_type: "mesh"
+  }
+
+  visible: true
+  tags: ["cube", "container"]
+
+  metadata {
+    key: "gltf_node_index"
+    value: "0"
+  }
+  metadata {
+    key: "gltf_mesh_name"
+    value: "Cube"
+  }
+}
+
+entities {
+  entity_id: "suzanne"
+  name: "Suzanne"
+
+  # Transform from GLTF (scaled to 0.67)
+  transform {
+    position { x: 0.0 y: 0.0 z: 0.0 }
+    rotation { x: 0.0 y: 0.0 z: 0.0 w: 1.0 }
+    scale { x: 0.67 y: 0.67 z: 0.67 }
+  }
+
+  # Material reference
+  material_id: "mat_suzanne"
+
+  # Mesh from GLTF
+  mesh_asset {
+    uri: "asset://suzanne-in-box/models/SuzanneInBox.gltf#meshes/1"
+    asset_type: "mesh"
+  }
+
+  visible: true
+  tags: ["suzanne", "monkey", "head"]
+
+  metadata {
+    key: "gltf_node_index"
+    value: "1"
+  }
+  metadata {
+    key: "gltf_mesh_name"
+    value: "Suzanne"
+  }
+}
+
+# ============================================================================
+# MATERIALS (2 materials from GLTF)
+# ============================================================================
+
+materials {
+  material_id: "mat_grid"
+  name: "GridMaterial"
+
+  # PBR Material (textured grid)
+  pbr_params {
+    base_color {
+      r: 1.0
+      g: 1.0
+      b: 1.0
+      a: 1.0
+    }
+
+    metallic: 0.0
+    roughness: 0.4
+    ao: 1.0
+
+    # Texture references
+    albedo_map {
+      uri: "asset://suzanne-in-box/textures/UVGrid.png"
+      asset_type: "texture"
+    }
+  }
+
+  # Texture references (explicit)
+  textures {
+    texture_id: "tex_uv_grid"
+    asset {
+      uri: "asset://suzanne-in-box/textures/UVGrid.png"
+      asset_type: "texture"
+    }
+    wrap_u: REPEAT
+    wrap_v: REPEAT
+    filter: LINEAR
+  }
+
+  metadata {
+    key: "double_sided"
+    value: "true"
+  }
+  metadata {
+    key: "source_material_index"
+    value: "0"
+  }
+}
+
+materials {
+  material_id: "mat_suzanne"
+  name: "MyMaterial"
+
+  # PBR Material (gray, non-metallic)
+  pbr_params {
+    base_color {
+      r: 0.8
+      g: 0.8
+      b: 0.8
+      a: 1.0
+    }
+
+    metallic: 0.0
+    roughness: 0.5
+    ao: 1.0
+  }
+
+  metadata {
+    key: "double_sided"
+    value: "true"
+  }
+  metadata {
+    key: "source_material_index"
+    value: "1"
+  }
+}
+
+# ============================================================================
+# CAMERA SETUP
+# ============================================================================
+
+camera {
+  camera_type: PERSPECTIVE
+
+  # Camera transform (positioned to view the scene)
+  transform {
+    position { x: 3.0 y: 3.0 z: 5.0 }
+    rotation { x: 0.0 y: 0.0 z: 0.0 w: 1.0 }
+  }
+
+  # Perspective parameters
+  fov: 45.0
+  aspect_ratio: 1.77777778  # 16:9
+  near_plane: 0.1
+  far_plane: 100.0
+
+  # Look-at target
+  look_at_target { x: 0.0 y: 0.0 z: 0.0 }
+}
+
+# ============================================================================
+# ENVIRONMENT SETTINGS
+# ============================================================================
+
+environment {
+  # Ambient light (global illumination base)
+  ambient_light {
+    color { r: 0.2 g: 0.2 b: 0.2 a: 1.0 }
+    intensity: 0.3
+  }
+
+  # Directional lights (sun/key light)
+  directional_lights {
+    light_id: "sun"
+    direction { x: -0.5 y: -1.0 z: -0.5 }
+    color { r: 1.0 g: 1.0 b: 1.0 a: 1.0 }
+    intensity: 1.5
+    cast_shadows: true
+  }
+
+  # Background (solid color)
+  background_color { r: 0.05 g: 0.05 b: 0.05 a: 1.0 }
+}
+
+# ============================================================================
+# SCENE METADATA
+# ============================================================================
+
+metadata {
+  key: "source_gltf"
+  value: "models/SuzanneInBox.gltf"
+}
+
+metadata {
+  key: "scene_type"
+  value: "static_3d"
+}
+
+metadata {
+  key: "entity_count"
+  value: "2"
+}
+
+metadata {
+  key: "material_count"
+  value: "2"
+}
+
+metadata {
+  key: "texture_count"
+  value: "1"
+}
+
+metadata {
+  key: "description"
+  value: "Suzanne monkey head inside a UV grid textured box - demonstrates basic GLTF loading and PBR materials"
+}
+
+metadata {
+  key: "author"
+  value: "Arctic Engine"
+}
+
+metadata {
+  key: "version"
+  value: "1.0.0"
+}

@@ -1,0 +1,421 @@
+# Cryo-Protocol Scene: Suzanne in Box (EMBEDDED FORMAT)
+# Package: chevp.cryo.runtime.RuntimeScene
+# Description: Fully embedded runtime scene with binary mesh/texture data inlined
+# Note: This is the compiled runtime format optimized for rendering
+
+scene_id: "suzanne-in-box-embedded"
+name: "Suzanne in Box (Runtime)"
+
+# ============================================================================
+# RUNTIME ENTITIES (optimized, ready to render)
+# ============================================================================
+
+entities {
+  entity_id: "cube"
+  name: "Cube"
+
+  # Transform
+  transform {
+    position { x: 0.0 y: 0.0 z: 0.0 }
+    rotation { x: 0.0 y: 0.0 z: 0.0 w: 1.0 }
+    scale { x: 1.0 y: 1.0 z: 1.0 }
+  }
+
+  # Cache handles (indices into caches)
+  material_handle: 0    # Index into material_cache
+  mesh_handle: 0        # Index into mesh_cache
+
+  # Bounding volumes (for culling)
+  aabb {
+    min { x: -1.0 y: -1.0 z: -1.0 }
+    max { x: 1.0 y: 1.0 z: 1.0 }
+  }
+
+  bounding_sphere {
+    center { x: 0.0 y: 0.0 z: 0.0 }
+    radius: 1.73205081  # sqrt(3) for unit cube
+  }
+
+  # Runtime flags
+  visible: true
+  casts_shadow: true
+  receives_shadow: true
+  render_layer: 1
+}
+
+entities {
+  entity_id: "suzanne"
+  name: "Suzanne"
+
+  # Transform
+  transform {
+    position { x: 0.0 y: 0.0 z: 0.0 }
+    rotation { x: 0.0 y: 0.0 z: 0.0 w: 1.0 }
+    scale { x: 0.67 y: 0.67 z: 0.67 }
+  }
+
+  # Cache handles
+  material_handle: 1    # Index into material_cache
+  mesh_handle: 1        # Index into mesh_cache
+
+  # Bounding volumes (approximated for Suzanne head)
+  aabb {
+    min { x: -0.9 y: -0.75 z: -0.6 }
+    max { x: 0.9 y: 0.75 z: 0.6 }
+  }
+
+  bounding_sphere {
+    center { x: 0.0 y: 0.0 z: 0.0 }
+    radius: 1.0
+  }
+
+  # Runtime flags
+  visible: true
+  casts_shadow: true
+  receives_shadow: true
+  render_layer: 1
+}
+
+# ============================================================================
+# COMPILED SHADER CACHE
+# ============================================================================
+
+shader_cache {
+  programs {
+    program_id: 0
+    name: "pbr_standard"
+
+    # SPIR-V bytecode (embedded - would be actual bytes in binary .cyb)
+    # vertex_spirv: <SPIR-V bytes>
+    # fragment_spirv: <SPIR-V bytes>
+
+    # Shader reflection
+    reflection {
+      uniforms {
+        name: "u_modelMatrix"
+        binding: 0
+        set: 0
+        type: "mat4"
+        size: 64
+      }
+      uniforms {
+        name: "u_viewMatrix"
+        binding: 1
+        set: 0
+        type: "mat4"
+        size: 64
+      }
+      uniforms {
+        name: "u_projectionMatrix"
+        binding: 2
+        set: 0
+        type: "mat4"
+        size: 64
+      }
+      uniforms {
+        name: "u_baseColorFactor"
+        binding: 3
+        set: 1
+        type: "vec4"
+        size: 16
+      }
+      uniforms {
+        name: "u_metallicRoughnessFactor"
+        binding: 4
+        set: 1
+        type: "vec2"
+        size: 8
+      }
+
+      vertex_inputs {
+        name: "a_position"
+        location: 0
+        type: "vec3"
+        format: FLOAT3
+      }
+      vertex_inputs {
+        name: "a_normal"
+        location: 1
+        type: "vec3"
+        format: FLOAT3
+      }
+      vertex_inputs {
+        name: "a_texcoord"
+        location: 2
+        type: "vec2"
+        format: FLOAT2
+      }
+
+      fragment_outputs {
+        name: "o_color"
+        location: 0
+        type: "vec4"
+      }
+
+      textures {
+        name: "u_baseColorTexture"
+        binding: 5
+        set: 1
+        sampler_type: "sampler2D"
+      }
+    }
+
+    source_graph_id: "pbr_standard_graph"
+    platform: "vulkan"
+  }
+}
+
+# ============================================================================
+# MATERIAL CACHE
+# ============================================================================
+
+material_cache {
+  # Material 0: Grid material (textured)
+  materials {
+    material_id: 0
+    name: "GridMaterial"
+
+    shader_program_handle: 0
+
+    # Uniform values
+    uniforms {
+      key: "u_baseColorFactor"
+      value {
+        vec4_value { x: 1.0 y: 1.0 z: 1.0 w: 1.0 }
+      }
+    }
+    uniforms {
+      key: "u_metallicRoughnessFactor"
+      value {
+        vec2_value { x: 0.0 y: 0.4 }
+      }
+    }
+
+    # Texture handles
+    texture_handles: 0  # Index into texture_cache
+
+    render_state {
+      double_sided: true
+      alpha_mode: OPAQUE
+      depth_test: true
+      depth_write: true
+    }
+  }
+
+  # Material 1: Suzanne material (gray, non-textured)
+  materials {
+    material_id: 1
+    name: "MyMaterial"
+
+    shader_program_handle: 0
+
+    # Uniform values
+    uniforms {
+      key: "u_baseColorFactor"
+      value {
+        vec4_value { x: 0.8 y: 0.8 z: 0.8 w: 1.0 }
+      }
+    }
+    uniforms {
+      key: "u_metallicRoughnessFactor"
+      value {
+        vec2_value { x: 0.0 y: 0.5 }
+      }
+    }
+
+    render_state {
+      double_sided: true
+      alpha_mode: OPAQUE
+      depth_test: true
+      depth_write: true
+    }
+  }
+}
+
+# ============================================================================
+# MESH CACHE (embedded vertex/index data)
+# ============================================================================
+
+mesh_cache {
+  # Mesh 0: Cube
+  meshes {
+    mesh_id: 0
+    name: "Cube"
+
+    # Vertex/index buffer data (embedded - would be actual bytes in binary .cyb)
+    # vertex_buffer: <binary vertex data>
+    # index_buffer: <binary index data>
+
+    vertex_count: 24        # Cube with unique vertices per face
+    triangle_count: 12      # 6 faces * 2 triangles each
+    vertex_format: POSITION_NORMAL_UV
+
+    # Bounding volume
+    bounds_min { x: -1.0 y: -1.0 z: -1.0 }
+    bounds_max { x: 1.0 y: 1.0 z: 1.0 }
+
+    # Buffer sizes (for validation)
+    vertex_buffer_size: 2304   # 24 vertices * 96 bytes (vec3 pos + vec3 normal + vec2 uv + padding)
+    index_buffer_size: 72      # 36 indices * 2 bytes (uint16)
+
+    metadata {
+      key: "source_gltf_mesh"
+      value: "SuzanneInBox.gltf#meshes/0"
+    }
+  }
+
+  # Mesh 1: Suzanne
+  meshes {
+    mesh_id: 1
+    name: "Suzanne"
+
+    # Vertex/index buffer data (embedded)
+    # vertex_buffer: <binary vertex data>
+    # index_buffer: <binary index data>
+
+    vertex_count: 507       # Suzanne has 507 unique vertices
+    triangle_count: 968     # Suzanne has 968 triangles
+    vertex_format: POSITION_NORMAL_UV
+
+    # Bounding volume (approximated)
+    bounds_min { x: -1.35 y: -1.12 z: -0.9 }
+    bounds_max { x: 1.35 y: 1.12 z: 0.9 }
+
+    # Buffer sizes
+    vertex_buffer_size: 48672   # 507 vertices * 96 bytes
+    index_buffer_size: 5808     # 2904 indices * 2 bytes
+
+    metadata {
+      key: "source_gltf_mesh"
+      value: "SuzanneInBox.gltf#meshes/1"
+    }
+  }
+}
+
+# ============================================================================
+# TEXTURE CACHE (embedded texture data)
+# ============================================================================
+
+texture_cache {
+  # Texture 0: UV Grid
+  textures {
+    texture_id: 0
+    name: "UVGrid"
+
+    width: 1024
+    height: 1024
+    format: RGBA8
+    mip_levels: 10          # Full mipmap chain
+
+    # Binary texture data (embedded - would be actual PNG/KTX bytes in binary .cyb)
+    # texture_data: <binary image data>
+
+    # Sampler settings
+    wrap_u: REPEAT
+    wrap_v: REPEAT
+    filter_min: LINEAR_MIPMAP_LINEAR
+    filter_mag: LINEAR
+
+    # Size info
+    data_size_bytes: 1398101   # Compressed texture size
+
+    metadata {
+      key: "source_file"
+      value: "models/UVGrid.png"
+    }
+    metadata {
+      key: "compression"
+      value: "BC7"  # Block compression for better quality
+    }
+  }
+}
+
+# ============================================================================
+# ACTIVE CAMERA
+# ============================================================================
+
+active_camera {
+  camera_type: PERSPECTIVE
+
+  transform {
+    position { x: 3.0 y: 3.0 z: 5.0 }
+    rotation { x: 0.0 y: 0.0 z: 0.0 w: 1.0 }
+  }
+
+  fov: 45.0
+  aspect_ratio: 1.77777778
+  near_plane: 0.1
+  far_plane: 100.0
+
+  look_at_target { x: 0.0 y: 0.0 z: 0.0 }
+}
+
+# ============================================================================
+# RUNTIME ENVIRONMENT
+# ============================================================================
+
+environment {
+  # Ambient light
+  ambient_color { r: 0.2 g: 0.2 b: 0.2 a: 1.0 }
+  ambient_intensity: 0.3
+
+  # Directional light
+  directional_lights {
+    light_index: 0
+    direction { x: -0.5 y: -1.0 z: -0.5 }
+    color { r: 1.0 g: 1.0 b: 1.0 a: 1.0 }
+    intensity: 1.5
+    shadow_map_resolution: 2048
+    shadow_cascade_count: 4
+  }
+
+  # Background
+  background_type: SOLID_COLOR
+  background_color { r: 0.05 g: 0.05 b: 0.05 a: 1.0 }
+
+  # Fog (disabled)
+  fog_enabled: false
+}
+
+# ============================================================================
+# PERFORMANCE METADATA
+# ============================================================================
+
+total_vertices: 531           # 24 (cube) + 507 (suzanne)
+total_triangles: 980          # 12 (cube) + 968 (suzanne)
+draw_call_count: 2            # One per entity
+memory_usage_bytes: 1456757   # Total embedded data size
+
+# ============================================================================
+# SCENE METADATA
+# ============================================================================
+
+metadata {
+  key: "source_authoring_scene"
+  value: "suzanne-in-box.cryo.pbtxt"
+}
+
+metadata {
+  key: "compilation_timestamp"
+  value: "2025-10-18T17:00:00Z"
+}
+
+metadata {
+  key: "format_version"
+  value: "cryo-runtime-1.0"
+}
+
+metadata {
+  key: "storage_backend"
+  value: "sqlite"
+}
+
+metadata {
+  key: "compression"
+  value: "zstd"
+}
+
+metadata {
+  key: "description"
+  value: "Runtime-optimized scene with all data embedded for fast loading"
+}

@@ -18,7 +18,7 @@
     "game-engine",
     "web-assets"
   ],
-  "author": "Arctic Engine Team",
+  "author": "Patrice Chevillat",
   "license": "MIT",
   "files": [
     "shaders/",
