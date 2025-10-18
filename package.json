@@ -1,0 +1,39 @@
+{
+  "name": "cryo-web-assets",
+  "version": "1.0.0",
+  "description": "Web-deployable assets for Arctic Engine - shaders, textures, and WebGL components",
+  "type": "module",
+  "main": "examples/cryo-logo-shader.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chevp/cryo-web-assets.git"
+  },
+  "keywords": [
+    "arctic-engine",
+    "webgl",
+    "shaders",
+    "glsl",
+    "ice-effects",
+    "cryo",
+    "game-engine",
+    "web-assets"
+  ],
+  "author": "Arctic Engine Team",
+  "license": "MIT",
+  "files": [
+    "shaders/",
+    "textures/",
+    "examples/",
+    "types/",
+    "README.md"
+  ],
+  "exports": {
+    ".": "./examples/cryo-logo-shader.ts",
+    "./shaders/*": "./shaders/*",
+    "./textures/*": "./textures/*",
+    "./types": "./types/webgl-protocol.ts"
+  },
+  "scripts": {
+    "validate": "echo 'No tests configured yet'"
+  }
+}
